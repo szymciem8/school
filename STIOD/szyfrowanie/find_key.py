@@ -1,49 +1,62 @@
 import cv2
+from functions import *
+from matplotlib import pyplot as plt 
 
-def rot_img_code(img, shift):
-
-    for px in range(len(img)):
-        for py in range(len(img[px])):
-            img[px][py] = img[px][py] + shift
-    return img
-
-def key_img_code(img, key, flag='encode'):
-    i=0
-
-    if flag == 'encode': direction=1
-    if flag == 'decode': direction=-1
-    else: direction = 1
-
-    for px in range(len(img)):
-        for py in range(len(img[px])):
-            img[px][py] = img[px][py] + direction * (key[i % len(key)] % 255)
-            i += 1
-
-    return img
-
-line = []
+lines = []
 with open('szyfrowanie/TI4B/hasla.txt') as f:
     n_of_keys = int(f.readline())
     for i in range(n_of_keys):
-        line.append(list(map(int, f.readline().split(' '))))
+        lines.append(list(map(int, f.readline().split(' '))))
+        del lines[i][0]
+        
+    #print(lines)
 
 # for i in range(n_of_keys):
 #     print(line[i])
 
-# with open('szyfrowanie/TI4B/1_tekst.txt', encoding="US-ASCII") as fi:
-#     text = fi.readline()
-#     print(text)
+with open('szyfrowanie/TI4B/2_tekst.txt', 'rb') as f:
+    text_bin = f.read()
+    text = ''
 
-img = cv2.imread("szyfrowanie/TI4B/3.png", 0)
+    for el in text_bin:
+        text += chr(el)
+    
+    #print(text)
+
+
+for i, key in enumerate(lines):
+
+    new_text = key_code(text, key, 'decode')
+    hist = get_hist_text(new_text)
+
+    if max(hist) > 100:
+        print('found')
+        print(i)
+        print(hist)
+        print(key)
+        print(new_text)
+
+
+img = cv2.imread("szyfrowanie/TI4B/2.png", 0)
+
+for i, key in enumerate(lines):
+
+    #if i>1200:
+
+    new_img = key_img_code(img, key, 'decode')
+
+    hist = get_hist_img(new_img)
+    #print(hist)
+
+    print(i)
+    if max(hist) > 1200:
+        print(key)
+        print('found')
+        print(hist)
+        cv2.imshow("Decoded", new_img)
+        break
+
 cv2.imshow("Original", img)
-
-for i in range(n_of_keys):
-    del line[i][0]
-    key = line[i]
-
-    key_decoded_img = key_img_code(img, key, 'decode')
-    cv2.imshow("key decoded img", key_decoded_img)
-
-    cv2.waitKey(0)
+cv2.waitKey(0)
 
 cv2.destroyAllWindows()
