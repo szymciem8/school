@@ -1,13 +1,13 @@
 from functions import *
 
 matrix = [[1, -4, 5, -2, 0, -2], 
-          [-4, -1, 2, 1, -1, 3], 
-          [-2, -5, 0, -3, 1, 9], 
-          [8, -2, -1, 5, -2, -1], 
-          [1, 2, -2, 4, -5, -6], 
-          [7, 5, -1, 1, -4, -6]]
+          [-4, -1, 3, 1, -1, 2], 
+          [-2, -5, 4, -3, 1, 9], 
+          [8, -2, 4, 5, -2, -1], 
+          [1, 2, 4, 4, -5, -6], 
+          [7, 5, 4, 1, -4, -6]]
 
-strategy = 1
+strategy = 2
 if strategy == 1:
     first_player = minmax(matrix, "row")
     second_player = maxmin(matrix, "column")
@@ -30,7 +30,8 @@ print(second_player)
 fir_iter = iter(first_player)
 sec_iter = iter(second_player)
 
-if next(fir_iter) == next(sec_iter):
+
+if list(first_player.values())[0] == list(second_player.values())[0]:
     print("Odnaleziono punkt siodłowy")
 
 level = 1
